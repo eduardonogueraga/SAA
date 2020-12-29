@@ -63,7 +63,7 @@ void RegistroDatos::registrarEvento(String descripcion){
 		fichero.close();
 
 	} else {
-		Serial.println("Error en apertura del archivo SD");
+		//Serial.println("Error en apertura del archivo SD");  //@develop("Omitir el fallo por SD cuando no esta conectado")
 	}
 
 
@@ -81,7 +81,7 @@ void RegistroDatos::registrarSensor(String descripcion){
 		fichero.close();
 
 	} else {
-		Serial.println("Error en apertura del archivo SD");
+		// Serial.println("Error en apertura del archivo SD"); //@develop("Omitir el fallo por SD cuando no esta conectado")
 	}
 
 

@@ -1,12 +1,24 @@
 /**
  * SISTEMA DE ALARMA DE LA ALBERQUILLA
  * Version: DESARROLLO
- * Leyenda:  UTV, ACCESO A GSM, MDBUG
- * Por hacer: Escribir en variables SD, Desactivar la bocina?, Investigar sobre refrescos i2c por tiempo, Sistema de deteccion fotosensible, Sistema de sabotaje
+ * Leyenda:  UTV, ACCESO A GSM, MDBUG, @develop
  *
- * Atencion:
+ * POR HACER:
+ *  Escribir en variables SD
+ *  Investigar sobre refrescos i2c por tiempo
+ *  Sistema de deteccion fotosensible
+ *  Sistema de sabotaje
+ *  Funcion fecha para inserts SQL
+ *  Funcion de registro para inserts de base de datos
+ *  Funcion de testeo de Red (A MEDIO)
+ *  Aviso en pantalla de fallo en SD o RTC
+ *  Restaurar fecha y hora desde el panel
  *
- * -Cambiar MDBUG Especial atencion a la interrupcion de bateria
+ * LISTA DE BUGS:
+ * Se registra movimiento durante el tiempo de margen
+ * Despues del intrusismo lanza un falso aviso de bateria de emergencia (En algunas se rompe la fecha en otras no)
+ * La fecha del reset atrasa un dia
+ * Aunque los intentos diarios esten acabados se suma uno mas al contador de SMS (Solo pasa en develop?)
  *
  */
 
@@ -239,9 +251,11 @@ void setup() {
 
 //Declaracion sensores
   pinMode(MG_SENSOR, INPUT_PULLUP);
-  pinMode(PIR_MOTION_SENSOR_1, INPUT); //pull down externo
-  pinMode(PIR_MOTION_SENSOR_2, INPUT);
-  pinMode(PIR_MOTION_SENSOR_3, INPUT);
+  // @develop("Pullup interno para evitar ruido en las entradas")
+  pinMode(PIR_MOTION_SENSOR_1, INPUT_PULLUP);
+  pinMode(PIR_MOTION_SENSOR_2, INPUT_PULLUP);
+  pinMode(PIR_MOTION_SENSOR_3, INPUT_PULLUP);
+
 
 //Declaracion bocina
   pinMode(bocinaPin, OUTPUT);  //Bocina
