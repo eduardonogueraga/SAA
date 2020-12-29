@@ -1,0 +1,60 @@
+/*
+ * Entorno.cpp
+ *
+ *  Created on: 27 oct. 2020
+ *      Author: isrev
+ */
+
+
+#include "Arduino.h"
+#include "Entorno.h"
+
+//Clave del sistema
+#define PASS "1234"
+
+//Telefonos
+#define MOVIL_PAPA "123456789"
+#define MOVIL_EDU "123456789"
+#define MOVIL_MAMA "123456789"
+
+String Entorno::password = PASS;
+
+String Entorno::tlf_principal=MOVIL_PAPA;
+String Entorno::tlf_numero_2=MOVIL_EDU;
+String Entorno::tlf_numero_3=MOVIL_MAMA;
+
+
+String Entorno::getPassword()
+{
+  const String pass = password;
+  return pass;
+}
+
+String Entorno::getTelefonoMensaje()
+{
+  return tlf_principal;
+}
+
+String Entorno::getTelefonoLlamada(int numero)
+{
+  
+  switch (numero)
+  {
+  case 1:
+
+    return tlf_numero_2;
+    break;
+  
+  case 2:
+
+    return tlf_numero_3;
+    break;
+
+  default:
+
+    Serial.println("NUMERO NO VALIDO");
+    break;
+
+  }
+}
+
