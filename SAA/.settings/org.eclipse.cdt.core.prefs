@@ -52,7 +52,7 @@ environment/project/io.sloeber.core.toolChain.release.1985381030/A.BUILD.MCU/ope
 environment/project/io.sloeber.core.toolChain.release.1985381030/A.BUILD.MCU/value=atmega2560
 environment/project/io.sloeber.core.toolChain.release.1985381030/A.BUILD.PATH/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1985381030/A.BUILD.PATH/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1985381030/A.BUILD.PATH/value=C\:\\Users\\isrev\\Desktop\\SAA\\SAA\\Release
+environment/project/io.sloeber.core.toolChain.release.1985381030/A.BUILD.PATH/value=C\:\\Users\\isrev\\git\\SAA\\SAA\\Release
 environment/project/io.sloeber.core.toolChain.release.1985381030/A.BUILD.PROJECT_NAME/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1985381030/A.BUILD.PROJECT_NAME/operation=replace
 environment/project/io.sloeber.core.toolChain.release.1985381030/A.BUILD.PROJECT_NAME/value=${ProjName}

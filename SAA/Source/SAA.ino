@@ -1,6 +1,6 @@
 /**
  * SISTEMA DE ALARMA DE LA ALBERQUILLA
- * Version:
+ * Version: DESARROLLO
  * Leyenda:  UTV, ACCESO A GSM, MDBUG
  * Por hacer: Escribir en variables SD, Desactivar la bocina?, Investigar sobre refrescos i2c por tiempo, Sistema de deteccion fotosensible, Sistema de sabotaje
  *
@@ -11,7 +11,7 @@
  */
 
 //Version-info
-String version_software = "VE19R1-01 ";
+String version_software = "DEVELOP VE19R1-01 ";
 String fecha = "29/12/20";
 
 
@@ -171,7 +171,7 @@ boolean modo_sensible = false;
 long modo_sensible_tiempo = 0;
 
 //Variables comprobarModo
- bool controlUtv =true; //true para versiones definitivas MDBUG
+ bool controlUtv =false; //true para versiones definitivas MDBUG
  byte controlUtvAcceso =1;
 
 
@@ -284,7 +284,7 @@ mensaje.inicioSIM800(SIM800L);
 pinMode(SENSOR_BATERIA, INPUT_PULLUP);
 
 //Interrupciones del sistema MDBUG Deshabilitar solo durante testeo
-attachInterrupt(digitalPinToInterrupt(FALLO_BATERIA), interrupcionFalloAlimentacion, FALLING); //Flanco de bajada
+//attachInterrupt(digitalPinToInterrupt(FALLO_BATERIA), interrupcionFalloAlimentacion, FALLING); //Flanco de bajada
 
 //Comprobar estado previo de la alarma
 
@@ -601,7 +601,7 @@ if (millis() > tiempoOn) {
 				avisointrusismo = 1;
 				avisoalarma = 1;
 
-				if(controlUtv==true){  //false para debug  Evita que las entradas se guarden en modo prueba  MDBUG
+				if(controlUtv==false){  //false para debug  Evita que las entradas se guarden en modo prueba  MDBUG
 					saltoFalso++;
 				}
 			}
@@ -631,7 +631,7 @@ if (ladrones){
 			pantalla.lcdAvisoEnviado(lcd);
 
 
-			if(controlUtv==true){  //false para debug   //ACCESO A GSM MDBUG
+			if(controlUtv==false){  //false para debug   //ACCESO A GSM MDBUG
 
 				mensaje.setAsuntoPir(datos);   // Mensaje PIR
 				mensaje.enviarMensaje(datos);  //Registro principal
@@ -704,7 +704,7 @@ void activar(bool estado_rc){
 		Serial.println("\nAlarma activada automaticamente");
 		registro.registrarEvento("ALARMA ACTIVADA AUTOMATICAMENTE");
 
-		if(controlUtv==true){ 	//false para debug unicamente MDBUG
+		if(controlUtv==false){ 	//false para debug unicamente MDBUG
 			bocinaTiempo = millis() + 480000;	//Reduccion del tiempo de bocina durante reactivaciones
 		} else{
 			bocinaTiempo = millis() + 10000;
@@ -1090,7 +1090,7 @@ void activacionAutomatica(){
 			activar(rcEstado);
 			entradapass = "";
 
-			if(controlUtv==true){   //false para debug unicamente MDBUG //ACCESO A GSM
+			if(controlUtv==false){   //false para debug unicamente MDBUG //ACCESO A GSM
 
 				mensaje.setAsunto("ALARMA REACTIVDA CON EXITO");
 				mensaje.enviarMensaje(datosPhantom); //Esta vez con los datos del phantom
