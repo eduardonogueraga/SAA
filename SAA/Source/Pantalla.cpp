@@ -36,7 +36,8 @@ extern Fecha tiempo;
 		lcd.print("   ");
 	}
 	lcd.setCursor(10,1);
-	lcd.print(tiempo.imprimeHora()+" ");
+	// @develop ('Sin hora')
+	lcd.print("__-__ ");
 	lcd.setCursor(15,1);
 	//lcd.write(1); //Candado
 

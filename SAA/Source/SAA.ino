@@ -23,8 +23,8 @@
  */
 
 //Version-info
-String version_software = "DEVELOP VE19R1-01 ";
-String fecha = "29/12/20";
+String version_software = "DEVELOP  VE19R1 ";
+String fecha = "31/12/20";
 
 
 #include "Arduino.h"
@@ -59,17 +59,20 @@ char keys[ROWS][COLS] = {
 		{'7','8', '9'},
 		{'*','0', '#'}
 };
-	byte rowPins[ROWS] = {36, 34, 32, 30}; 	// Salidas en placa para las filas
-	byte colPins[COLS] = {38, 40, 42}; 		// Entrada en placa para las columnas
+	// @develop ('Pines adaptados')
+	byte rowPins[ROWS] = {25, 24, 23, 22}; 	// Salidas en placa para las filas
+	byte colPins[COLS] = {26, 27, 28}; 		// Entrada en placa para las columnas
 
 
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
-#define GSM_TX 8
-#define GSM_RX 9
+// @develop ('Pines adaptados')
+#define GSM_TX 49
+#define GSM_RX 48
 
 SoftwareSerial SIM800L(GSM_TX,GSM_RX); 		 //SIM800L parametros pines TX y RX
-LiquidCrystal_I2C lcd (0x3F, 16, 2); 		 //El codec cambia en la pantalla nueva  0x3F 0x27
+// @develop ('Codec adaptado')
+LiquidCrystal_I2C lcd (0x27, 16, 2); 		 //El codec cambia en la pantalla nueva  0x3F 0x27
 
 
 //Instancias de interstrike
@@ -115,11 +118,12 @@ boolean entradacompleta = false;    // Contiene si la entrada esta entera o no
 bool disparadorPir = false;
 bool estadoSensorPir;
 
-#define PIR_MOTION_SENSOR_1 43
-#define PIR_MOTION_SENSOR_2 45
-#define PIR_MOTION_SENSOR_3 47
-#define PIR_MOTION_SENSOR_4 49
-#define MG_SENSOR 48
+// @develop ('Pines adaptados')
+#define PIR_MOTION_SENSOR_1 34
+#define PIR_MOTION_SENSOR_2 35
+#define PIR_MOTION_SENSOR_3 36
+//#define PIR_MOTION_SENSOR_4 49 No se usa
+#define MG_SENSOR 33
 
 bool sensor0 = false;
 bool sensor1;
@@ -159,22 +163,25 @@ long tiempoOn = 0;   //Tiempo despues de activar
 
 
 //Variables de reset
-#define RESETEAR 46
+// @develop ('Pines adaptados')
+#define RESETEAR 40
 
 //Variables ledCochera
-#define LED_COCHERA 44
+// @develop ('Pines adaptados')
+#define LED_COCHERA 29
 
 //Variables bocina
-byte bocinaPin = 23;
+// @develop ('Pines adaptados')
+byte bocinaPin = 32;
 long bocinaTiempo = 0;  //Tiempo de funcionamiento
 
 
 //Variables sleepMode
 byte sleepmode_gsm = 0; //Control de alimentacion GSM
 byte sleepmode_bluetooth = 2;	//Control de alientacion bluetooth
-
-byte sleep_t1 = 12;   // bluetooth
-byte sleep_t2 = 28;   // gsm
+// @develop ('Pines adaptados')
+byte sleep_t1 = 38;   // bluetooh
+byte sleep_t2 = 39;   // gsm
 long sleep_tiempo = 0;
 
 
@@ -206,7 +213,8 @@ long modo_sensible_tiempo = 0;
 
 
  //Watchdog
- #define WATCHDOG 22
+ // @develop ('Pines adaptados')
+ #define WATCHDOG 5
 
  //Control bateria
  #define SENSOR_BATERIA 2 //Monitoriza el flujo de tension en el booster

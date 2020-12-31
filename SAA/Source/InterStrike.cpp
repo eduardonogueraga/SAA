@@ -130,7 +130,7 @@
 		}
 
 		if(millis()>tiempoOn){
-			if (sensor == LOW) { // @develop("Cambiado a LOW para evitar saltos en sensor MG")
+			if (sensor == HIGH) { // @develop("Cambiado a LOW para evitar saltos en sensor MG")
 				ping:
 				gotoPing=0;
 				if(pirValor ==1){
