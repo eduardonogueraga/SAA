@@ -12,7 +12,7 @@
 
 //Version-info
 String version_software = "VE19R1-01 ";
-String fecha = "29/12/20";
+String fecha = "02/01/21";
 
 
 #include "Arduino.h"
