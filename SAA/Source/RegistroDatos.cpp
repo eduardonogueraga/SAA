@@ -52,6 +52,20 @@ void RegistroDatos::generarFichero(){
 
 }
 
+void RegistroDatos::registrarEventoBD(String sentenciaSQL){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+	if (fichero) {
+		fichero.println(sentenciaSQL);
+		fichero.close();
+
+	} else {
+		//Serial.println("Error en apertura del archivo SD");  //@develop("Omitir el fallo por SD cuando no esta conectado")
+	}
+
+}
+
 void RegistroDatos::registrarEvento(String descripcion){
 
 	extern Fecha tiempo;

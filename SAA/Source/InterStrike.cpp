@@ -8,6 +8,7 @@
 #include "InterStrike.h"
 #include "Datos.h"
 #include "RegistroDatos.h"
+#include "Fecha.h"
 
 	InterStrike::InterStrike()
 	{}
@@ -54,6 +55,7 @@
 	void InterStrike::compruebaEstado(int numero, byte pirValor){
 
 		extern long tiempoOn;
+		extern Fecha tiempo;
 		extern RegistroDatos registro;
 
 		if(gotoPing==1){ //Control serie
@@ -79,6 +81,13 @@
 					if(millis()>tiempoOn){
 						registro.registrarEvento("SEÑAL EN SENSOR "+(String)numero+": "+(String)strike); //Registran los datos en la tarjeta
 						registro.registrarEvento("PIR "+(String)numero+" :"+(String)strike+" ONLINE ");
+
+						registro.registrarEventoBD("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
+								"VALUES ('pir"+(String)numero+"', 'online', 'estandar', '"+tiempo.imprimeFechaSQL()+"');");
+
+						registro.registrarEventoBD("INSERT INTO `saltos` (`intrusismo`, `restaurado`, `entradas_id`, `sensores_id`) "
+								"VALUES ('0', '0',(SELECT max(id) FROM entradas), (SELECT max(id) FROM sensores));");
+						// Modificar los inserts para que en update posterior al mensaje se cambien ademas del campo id_mensaje el campo intrusismo
 					}
 
 				} else {
@@ -88,6 +97,9 @@
 					if(millis()>tiempoOn){
 						registro.registrarEvento("SEÑAL EN SENSOR APAGADO "+(String)numero+": "+(String)strike);
 						registro.registrarSensor("PIR "+(String)numero+" :"+(String)strike+" OFFLINE ");
+
+						registro.registrarEventoBD("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
+								"VALUES ('pir"+(String)numero+"', 'offline', 'estandar', '"+tiempo.imprimeFechaSQL()+"');");
 					}
 				}
 			}
@@ -127,6 +139,7 @@
 		//Sobrecarga Sensor MG
 
 		extern long tiempoOn;
+		extern Fecha tiempo;
 		extern RegistroDatos registro;
 
 		if(gotoPing==1){ //Control serie
@@ -146,11 +159,16 @@
 						Serial.print("\nSignal strike MG");
 						registro.registrarEvento("SEÑAL EN PUERTA COCHERA"); //Registran los datos en la tarjeta
 						registro.registrarSensor("SEÑAL EN PUERTA COCHERA ONLINE ");
+
+						registro.registrarEventoBD("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
+								"VALUES ('mg', 'online', 'estandar', '"+tiempo.imprimeFechaSQL()+"');");
 					}
 
 
 				}else{
 					registro.registrarSensor("SEÑAL EN PUERTA COCHERA OFFLINE");
+					registro.registrarEventoBD("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
+							"VALUES ('mg', 'offline', 'estandar', '"+tiempo.imprimeFechaSQL()+"');");
 				}
 			}
 		}
@@ -207,6 +225,7 @@
 
 	void InterStrike::compruebaPhantom(int numero, byte pirValor, Datos &_datos){
 
+		extern Fecha tiempo;
 		extern RegistroDatos registro;
 
 		if(gotoPing==1){ //Control serie
@@ -230,6 +249,9 @@
 					_datos.setDatos(numero, strike);
 					registro.registrarEvento("SEÑAL PHANTOM EN SENSOR "+(String)numero+": "+(String)strike);
 					registro.registrarSensor(((numero != 0)? "PIR "+(String)numero:"PUERTA COCHERA")+" :"+(String)strike+" ONLINE/PHANTOM ");
+
+					registro.registrarEventoBD("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
+							"VALUES ('"+((numero != 0)? "pir"+(String)numero:"mg")+"', 'online', 'phantom', '"+tiempo.imprimeFechaSQL()+"');");
 				}
 
 

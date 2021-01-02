@@ -50,6 +50,20 @@ String Fecha::imprimeFecha(DateTime paramFecha){
 }
 
 
+String Fecha::imprimeFechaSQL(){
+
+		fecha = rtc.now();
+		tiempo = (String)((String)fecha.year()
+						+"-"+(String)((fecha.month()<=9) ? ("0"+(String)fecha.month()) : (String)fecha.month())
+						+"-"+(fecha.day()<=9) ? ("0"+(String)fecha.day()) : (String)fecha.day())
+						+" "+(String)((fecha.hour()<=9) ? ("0"+(String)fecha.hour()) : (String)fecha.hour())
+						+":"+(String)((fecha.minute()<=9) ? ("0"+(String)fecha.minute()) : (String)fecha.minute())
+						+":"+ (String)((fecha.second()<=9) ? ("0"+(String)fecha.second()) : (String)fecha.second());
+
+		return tiempo;
+
+}
+
 String Fecha::imprimeFechaSimple(DateTime paramFecha){
 
 	if(paramFecha > 0){

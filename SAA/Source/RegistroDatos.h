@@ -22,6 +22,7 @@ public:
 	virtual ~RegistroDatos();
 	void iniciarSd();
 	void generarFichero();
+	void registrarEventoBD(String sentenciaSQL);
 	void registrarEvento(String descripcion);
 	void registrarSensor(String descripcion);
 	void mostrarRegistro(String nom);

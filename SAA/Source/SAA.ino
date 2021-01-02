@@ -313,6 +313,9 @@ if ((EEPROM.read(ALARMA_ACTIVADA) == 1) || (EEPROM.read(ALARMA_SALTADA) == 1)){
 	}
 
 
+registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) "
+			"VALUES ('ALARMA INICIADA', '"+tiempo.imprimeFechaSQL()+"');");
+
 //Info de inicio
 
 Serial.print("Version SAA: ");
@@ -345,8 +348,12 @@ void loop() {
  if(digitalRead(SENSOR_BATERIA) != sensorBateriaAnterior){
 	 if(digitalRead(SENSOR_BATERIA) == HIGH){
 		 registro.registrarEvento("ACTIVADA BATERIA DE EMERGENCIA");
+		 registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) VALUES "
+				 	 "('ACTIVADA BATERIA DE EMERGENCIA', '"+tiempo.imprimeFechaSQL()+"');");
 	 } else{
 		 registro.registrarEvento("DESACTIVADA BATERIA DE EMERGENCIA");
+		 registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) VALUES "
+				 "('DESACTIVADA BATERIA DE EMERGENCIA', '"+tiempo.imprimeFechaSQL()+"');");
 	 }
 
  }
@@ -361,6 +368,8 @@ void loop() {
 		 if(EEPROM.read(MENSAJES_ENVIADOS) != 0){
 			 EEPROM.write(MENSAJES_ENVIADOS,0);
 			 registro.registrarEvento("INTENTOS SMS DIARIOS RECUPERADOS");
+			 registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) "
+					 "VALUES ('INTENTOS SMS DIARIOS RECUPERADOS', '"+tiempo.imprimeFechaSQL()+"');");
 			 Serial.println("Intentos diarios recuperados");
 		 }
 	 }
@@ -723,6 +732,8 @@ void activar(bool estado_rc){
 
 		Serial.println("\nAlarma activada automaticamente");
 		registro.registrarEvento("ALARMA ACTIVADA AUTOMATICAMENTE");
+		registro.registrarEventoBD("INSERT INTO `saabd`.`entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
+		" `fecha`) VALUES ('activacion', 'auto', '0', '"+(String)(3-auto_rc_intentos)+"', '"+tiempo.imprimeFechaSQL()+"');");
 
 		if(controlUtv==false){ 	//false para debug unicamente MDBUG
 			bocinaTiempo = millis() + 480000;	//Reduccion del tiempo de bocina durante reactivaciones
@@ -736,6 +747,8 @@ void activar(bool estado_rc){
 		} else{
 			Serial.println("\nAlarma activada manualmente");
 			registro.registrarEvento("ALARMA ACTIVADA MANUALMENTE");
+			registro.registrarEventoBD("INSERT INTO `saabd`.`entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
+			" `fecha`) VALUES ('activacion', 'manual', '0', '"+(String)(3-auto_rc_intentos)+"', '"+tiempo.imprimeFechaSQL()+"');");
 			EEPROM.write(CONTROL_INTERRUPCION, 1); //Una interrupcion por cada activacion manual
 		}
 
@@ -772,9 +785,13 @@ void desactivar(bool estado_rc){
 	if(estado_rc){
 		Serial.println("\nAlarma desactivada automaticamente");
 		registro.registrarEvento("ALARMA DESACTIVADA AUTOMATICAMENTE");
+		registro.registrarEventoBD("INSERT INTO `saabd`.`entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
+		" `fecha`) VALUES ('desactivacion', 'auto', '0', '"+(String)(3-auto_rc_intentos)+"', '"+tiempo.imprimeFechaSQL()+"');");
 	} else{
 		Serial.println("\nAlarma desactivada manualmente");
 		registro.registrarEvento("ALARMA DESACTIVADA MANUALMENTE");
+		registro.registrarEventoBD("INSERT INTO `saabd`.`entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
+			" `fecha`) VALUES ('desactivacion', 'manual', '0', '"+(String)(3-auto_rc_intentos)+"', '"+tiempo.imprimeFechaSQL()+"');");
 	}
 
     modo_sensible = false;//Apaga el modo sensible
@@ -1130,6 +1147,8 @@ void comprobarModos(){
 
 				 Serial.println("UTV establecida en modo default");
 				 registro.registrarEvento("ALARMA ESTABLECIDA EN MODO DEFAULT");
+				 registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) "
+				 			"VALUES ('ALARMA ESTABLECIDA EN MODO DEFAULT', '"+tiempo.imprimeFechaSQL()+"');");
 				 utv_tiempo_off = 80000;
 				 utv_tiempo_off_beta = 10000;
 
@@ -1145,6 +1164,8 @@ void comprobarModos(){
 
 					 Serial.println("UTV establecida en modo prueba");
 					 registro.registrarEvento("ALARMA ESTABLECIDA EN MODO PRUEBA");
+					 registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) "
+					 			"VALUES ('ALARMA ESTABLECIDA EN MODO PRUEBA', '"+tiempo.imprimeFechaSQL()+"');");
 					 utv_tiempo_off = 20000;
 					 utv_tiempo_off_beta = 5000;
 

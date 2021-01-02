@@ -22,6 +22,7 @@ public:
 	Fecha();
 	void iniciarRTC();
 	String imprimeFecha(DateTime paramFecha = 0);
+	String imprimeFechaSQL();
 	String imprimeFechaSimple(DateTime paramFecha = 0);
 	String imprimeHora();
 	bool comprobarHora(int horas, int minutos = 0);
