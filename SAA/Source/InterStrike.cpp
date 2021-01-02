@@ -53,6 +53,7 @@
 
 	void InterStrike::compruebaEstado(int numero, byte pirValor){
 
+		extern long tiempoOn;
 		extern RegistroDatos registro;
 
 		if(gotoPing==1){ //Control serie
@@ -75,15 +76,19 @@
 					Serial.print(numero);
 					Serial.print(": ");
 					Serial.println(strike);
-					registro.registrarEvento("SEÑAL EN SENSOR "+(String)numero+": "+(String)strike); //Registran los datos en la tarjeta
-					registro.registrarSensor("PIR "+(String)numero+" :"+(String)strike+" ONLINE ");
+					if(millis()>tiempoOn){
+						registro.registrarEvento("SEÑAL EN SENSOR "+(String)numero+": "+(String)strike); //Registran los datos en la tarjeta
+						registro.registrarEvento("PIR "+(String)numero+" :"+(String)strike+" ONLINE ");
+					}
 
 				} else {
 					Serial.print("\nSensor ");
 					Serial.print(numero);
 					Serial.print(" deshabilitado");
-					registro.registrarEvento("SEÑAL EN SENSOR APAGADO "+(String)numero+": "+(String)strike);
-					registro.registrarSensor("PIR "+(String)numero+" :"+(String)strike+" OFFLINE ");
+					if(millis()>tiempoOn){
+						registro.registrarEvento("SEÑAL EN SENSOR APAGADO "+(String)numero+": "+(String)strike);
+						registro.registrarSensor("PIR "+(String)numero+" :"+(String)strike+" OFFLINE ");
+					}
 				}
 			}
 

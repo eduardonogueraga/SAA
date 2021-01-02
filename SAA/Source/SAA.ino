@@ -15,16 +15,14 @@
  *  Restaurar fecha y hora desde el panel
  *
  * LISTA DE BUGS:
- * Se registra movimiento durante el tiempo de margen
  * Despues del intrusismo lanza un falso aviso de bateria de emergencia (En algunas se rompe la fecha en otras no)
  * La fecha del reset atrasa un dia
- * Aunque los intentos diarios esten acabados se suma uno mas al contador de SMS (Solo pasa en develop?)
  *
  */
 
 //Version-info
 String version_software = "DEVELOP  VE19R1 ";
-String fecha = "31/12/20";
+String fecha = "01/01/21";
 
 
 #include "Arduino.h"
