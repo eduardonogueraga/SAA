@@ -10,7 +10,7 @@
 #include "Datos.h"
 #include <SoftwareSerial.h>
 #include "Fecha.h"
-#include "RegistroDatos.h"
+//#include "RegistroDatos.h"
 #include <EEPROM.h>
 #include "Entorno.h"
 
@@ -92,7 +92,7 @@
 		extern int valiza;
 		extern SoftwareSerial SIM800L;
 		extern Fecha tiempo;
-		extern RegistroDatos registro;
+		//extern RegistroDatos registro;
 
 		extern int saltoEnviadoHistorico;
 		extern byte smsDireccion;
@@ -105,7 +105,7 @@
 			saltoEnviadoHistorico++;
 			EEPROM.update(smsDireccion, saltoEnviadoHistorico);
 
-			registro.registrarEvento("["+Mensajes::getAsunto()+"] MENSAJE ENVIADO");
+			//registro.registrarEvento("["+Mensajes::getAsunto()+"] MENSAJE ENVIADO");
 			//Mensaje
 			SIM800L.println("AT+CMGF=1");
 			delay(200);
@@ -144,11 +144,11 @@
 			delay(200);
 
 			EEPROM.write(5,(EEPROM.read(5))+1); //Suma uno al contador
-			registro.registrarEvento("INTENTOS SMS REALIZADOS: "+(String)EEPROM.read(5));
+			//registro.registrarEvento("INTENTOS SMS REALIZADOS: "+(String)EEPROM.read(5));
 
 		}else{
 			Serial.println("Intentos diarios acabados");
-			registro.registrarEvento("INTENTOS SMS DIARIOS ACABADOS");
+			//registro.registrarEvento("INTENTOS SMS DIARIOS ACABADOS");
 		}
 
 
@@ -160,7 +160,7 @@
 
 		extern SoftwareSerial SIM800L;
 		extern Fecha tiempo;
-		extern RegistroDatos registro;
+		//extern RegistroDatos registro;
 
 		extern int saltoEnviadoHistorico;
 		extern byte smsDireccion;
@@ -172,7 +172,7 @@
 			saltoEnviadoHistorico++;
 			EEPROM.update(smsDireccion, saltoEnviadoHistorico);
 
-			registro.registrarEvento("["+Mensajes::getAsunto()+"] MENSAJE ENVIADO");
+			//registro.registrarEvento("["+Mensajes::getAsunto()+"] MENSAJE ENVIADO");
 			//Mensaje
 			SIM800L.println("AT+CMGF=1");
 			delay(200);
@@ -196,10 +196,10 @@
 			delay(200);
 
 			EEPROM.write(5,(EEPROM.read(5))+1); //Suma uno al contador
-			registro.registrarEvento("INTENTOS SMS REALIZADOS: "+(String)EEPROM.read(5));
+			//registro.registrarEvento("INTENTOS SMS REALIZADOS: "+(String)EEPROM.read(5));
 		}else{
 			Serial.println("Intentos diarios acabados");
-			registro.registrarEvento("INTENTOS SMS DIARIOS ACABADOS");
+			//registro.registrarEvento("INTENTOS SMS DIARIOS ACABADOS");
 		}
 
 

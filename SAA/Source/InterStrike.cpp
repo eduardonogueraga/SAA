@@ -7,7 +7,7 @@
 #include "Arduino.h"
 #include "InterStrike.h"
 #include "Datos.h"
-#include "RegistroDatos.h"
+//#include "RegistroDatos.h"
 
 	InterStrike::InterStrike()
 	{}
@@ -54,7 +54,7 @@
 	void InterStrike::compruebaEstado(int numero, byte pirValor){
 
 		extern long tiempoOn;
-		extern RegistroDatos registro;
+		//extern RegistroDatos registro;
 
 		if(gotoPing==1){ //Control serie
 			goto ping;
@@ -77,8 +77,8 @@
 					Serial.print(": ");
 					Serial.println(strike);
 					if(millis()>tiempoOn){
-						registro.registrarEvento("SEÑAL EN SENSOR "+(String)numero+": "+(String)strike); //Registran los datos en la tarjeta
-						registro.registrarEvento("PIR "+(String)numero+" :"+(String)strike+" ONLINE ");
+						//registro.registrarEvento("SEÑAL EN SENSOR "+(String)numero+": "+(String)strike); //Registran los datos en la tarjeta
+						//registro.registrarEvento("PIR "+(String)numero+" :"+(String)strike+" ONLINE ");
 					}
 
 				} else {
@@ -86,8 +86,8 @@
 					Serial.print(numero);
 					Serial.print(" deshabilitado");
 					if(millis()>tiempoOn){
-						registro.registrarEvento("SEÑAL EN SENSOR APAGADO "+(String)numero+": "+(String)strike);
-						registro.registrarSensor("PIR "+(String)numero+" :"+(String)strike+" OFFLINE ");
+						//registro.registrarEvento("SEÑAL EN SENSOR APAGADO "+(String)numero+": "+(String)strike);
+						//registro.registrarSensor("PIR "+(String)numero+" :"+(String)strike+" OFFLINE ");
 					}
 				}
 			}
@@ -127,7 +127,7 @@
 		//Sobrecarga Sensor MG
 
 		extern long tiempoOn;
-		extern RegistroDatos registro;
+		//extern RegistroDatos registro;
 
 		if(gotoPing==1){ //Control serie
 			goto ping;
@@ -144,13 +144,13 @@
 
 						strike++;
 						Serial.print("\nSignal strike MG");
-						registro.registrarEvento("SEÑAL EN PUERTA COCHERA"); //Registran los datos en la tarjeta
-						registro.registrarSensor("SEÑAL EN PUERTA COCHERA ONLINE ");
+						//registro.registrarEvento("SEÑAL EN PUERTA COCHERA"); //Registran los datos en la tarjeta
+						//registro.registrarSensor("SEÑAL EN PUERTA COCHERA ONLINE ");
 					}
 
 
 				}else{
-					registro.registrarSensor("SEÑAL EN PUERTA COCHERA OFFLINE");
+					//registro.registrarSensor("SEÑAL EN PUERTA COCHERA OFFLINE");
 				}
 			}
 		}
@@ -207,7 +207,7 @@
 
 	void InterStrike::compruebaPhantom(int numero, byte pirValor, Datos &_datos){
 
-		extern RegistroDatos registro;
+		//extern RegistroDatos registro;
 
 		if(gotoPing==1){ //Control serie
 			goto ping;
@@ -228,8 +228,8 @@
 				Serial.println(strike);
 
 					_datos.setDatos(numero, strike);
-					registro.registrarEvento("SEÑAL PHANTOM EN SENSOR "+(String)numero+": "+(String)strike);
-					registro.registrarSensor(((numero != 0)? "PIR "+(String)numero:"PUERTA COCHERA")+" :"+(String)strike+" ONLINE/PHANTOM ");
+					//registro.registrarEvento("SEÑAL PHANTOM EN SENSOR "+(String)numero+": "+(String)strike);
+					//registro.registrarSensor(((numero != 0)? "PIR "+(String)numero:"PUERTA COCHERA")+" :"+(String)strike+" ONLINE/PHANTOM ");
 				}
 
 
@@ -237,7 +237,7 @@
 				Serial.print("\nSensor ");
 				Serial.print(numero);
 				Serial.print(" deshabilitado");
-				registro.registrarSensor(((numero != 0)? "PIR "+(String)numero:"PUERTA COCHERA")+" :"+(String)strike+" OFFLINE/PHANTOM ");
+				//registro.registrarSensor(((numero != 0)? "PIR "+(String)numero:"PUERTA COCHERA")+" :"+(String)strike+" OFFLINE/PHANTOM ");
 			}
 		}
 

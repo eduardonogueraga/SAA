@@ -11,7 +11,7 @@
  */
 
 //Version-info
-String version_software = "VE19R1-01 ";
+String version_software = "VE19R1-NSD ";
 String fecha = "02/01/21";
 
 
@@ -30,7 +30,7 @@ String fecha = "02/01/21";
 #include "Menus.h"
 #include "Bocina.h"
 #include "ComandoSerie.h"
-#include "RegistroDatos.h"
+//#include "RegistroDatos.h"
 #include "Entorno.h"
 
 
@@ -75,7 +75,7 @@ Pantalla pantalla;
 Menus menu;
 Bocina bocina;
 Fecha tiempo;
-RegistroDatos registro;
+//RegistroDatos registro;
 
 //Instancia de serie MDBUG
 ComandoSerie demon;
@@ -275,7 +275,7 @@ pantalla.lcdInicio(lcd,version_software, fecha);
 
 
 //Inicializacion Tarjeta SD
-registro.iniciarSd();
+//registro.iniciarSd();
 
 //Inicializacion SIM800L
 mensaje.inicioSIM800(SIM800L);
@@ -324,9 +324,9 @@ void loop() {
 
  if(digitalRead(SENSOR_BATERIA) != sensorBateriaAnterior){
 	 if(digitalRead(SENSOR_BATERIA) == HIGH){
-		 registro.registrarEvento("ACTIVADA BATERIA DE EMERGENCIA");
+		 //registro.registrarEvento("ACTIVADA BATERIA DE EMERGENCIA");
 	 } else{
-		 registro.registrarEvento("DESACTIVADA BATERIA DE EMERGENCIA");
+		 //registro.registrarEvento("DESACTIVADA BATERIA DE EMERGENCIA");
 	 }
 
  }
@@ -340,7 +340,7 @@ void loop() {
 	 if(tiempo.comprobarHora(0, 0)){ //A las 12 cada dia comprueba si se han gastado mensajes
 		 if(EEPROM.read(MENSAJES_ENVIADOS) != 0){
 			 EEPROM.write(MENSAJES_ENVIADOS,0);
-			 registro.registrarEvento("INTENTOS SMS DIARIOS RECUPERADOS");
+			 //registro.registrarEvento("INTENTOS SMS DIARIOS RECUPERADOS");
 			 Serial.println("Intentos diarios recuperados");
 		 }
 	 }
@@ -585,7 +585,7 @@ if (millis() > tiempoOn) {
 			if (estadoSensorPir == true) { //Estado sensor
 
 				Serial.println("\nConjunto activo");
-				registro.registrarEvento("AVISO INTRUSISMO EN "+zona[valiza]);
+				//registro.registrarEvento("AVISO INTRUSISMO EN "+zona[valiza]);
 
 				ladrones = true;
 				disparadorPir=true;  //Cierre de la clase interstrike
@@ -627,7 +627,7 @@ if (ladrones){
 		if (avisoalarma == 1){
 
 			Serial.println("\nTiempo off acabado \nAVISO ENVIADO");
-			registro.registrarEvento("TIEMPO ACABADO AVISO ENVIADO");
+			//registro.registrarEvento("TIEMPO ACABADO AVISO ENVIADO");
 			pantalla.lcdAvisoEnviado(lcd);
 
 
@@ -702,7 +702,7 @@ void activar(bool estado_rc){
 	if(estado_rc){  //TODO ajustar con tiempos utv
 
 		Serial.println("\nAlarma activada automaticamente");
-		registro.registrarEvento("ALARMA ACTIVADA AUTOMATICAMENTE");
+		//registro.registrarEvento("ALARMA ACTIVADA AUTOMATICAMENTE");
 
 		if(controlUtv==true){ 	//false para debug unicamente MDBUG
 			bocinaTiempo = millis() + 480000;	//Reduccion del tiempo de bocina durante reactivaciones
@@ -715,7 +715,7 @@ void activar(bool estado_rc){
 
 		} else{
 			Serial.println("\nAlarma activada manualmente");
-			registro.registrarEvento("ALARMA ACTIVADA MANUALMENTE");
+			//registro.registrarEvento("ALARMA ACTIVADA MANUALMENTE");
 			EEPROM.write(CONTROL_INTERRUPCION, 1); //Una interrupcion por cada activacion manual
 		}
 
@@ -751,10 +751,10 @@ void desactivar(bool estado_rc){
 
 	if(estado_rc){
 		Serial.println("\nAlarma desactivada automaticamente");
-		registro.registrarEvento("ALARMA DESACTIVADA AUTOMATICAMENTE");
+		//registro.registrarEvento("ALARMA DESACTIVADA AUTOMATICAMENTE");
 	} else{
 		Serial.println("\nAlarma desactivada manualmente");
-		registro.registrarEvento("ALARMA DESACTIVADA MANUALMENTE");
+		//registro.registrarEvento("ALARMA DESACTIVADA MANUALMENTE");
 	}
 
     modo_sensible = false;//Apaga el modo sensible
@@ -797,7 +797,7 @@ void desactivar(bool estado_rc){
 	if(estado_rc){
 		Serial.print("Intentos restantes:  ");
 		Serial.println(3-auto_rc_intentos);
-		registro.registrarEvento("INTENTOS DE REACTIVACION RESTANTES: "+(String)(3-auto_rc_intentos));
+		//registro.registrarEvento("INTENTOS DE REACTIVACION RESTANTES: "+(String)(3-auto_rc_intentos));
 	} else{
 		auto_rc_intentos = 0; //Limite de veces que puede rearmarse de manera automatica
 	}
@@ -840,7 +840,7 @@ void mensajeError(volatile byte &Error){
 		case 1:
 			if(EEPROM.read(CONTROL_INTERRUPCION) == 1){
 
-				registro.registrarEvento("INTERRUPCION POR FALLO EN ALIMENTACION PRINCIPAL");
+				//registro.registrarEvento("INTERRUPCION POR FALLO EN ALIMENTACION PRINCIPAL");
 
 				desactivar(false);
 				EEPROM.write(ALARMA_ACTIVADA, 0); //Estado de activacion desactivado
@@ -881,7 +881,7 @@ void mensajeError(volatile byte &Error){
 
 void resetear(){
 	Serial.println("\nRESETEANDO");
-	registro.registrarEvento("ALARMA RESETEADA");
+	//registro.registrarEvento("ALARMA RESETEADA");
 	entradapass = "";
 	EEPROM.write(ALARMA_ACTIVADA, 0); //Estado de activacion desactivado
 	EEPROM.write(ALARMA_SALTADA, 0); //Estado de salto sin salto
@@ -894,7 +894,7 @@ void resetAutomatico(){
 	if(tiempo.comprobarFecha(tiempo.getFechaReset())){
 		if(tiempo.comprobarHora(16, 30)){
 			Serial.println("\nRESET PROGRAMADO DEL SISTEMA");
-			registro.registrarEvento("RESET PROGRAMADO CON FECHA ["+tiempo.imprimeFechaSimple(tiempo.getFechaReset())+"]");
+			//registro.registrarEvento("RESET PROGRAMADO CON FECHA ["+tiempo.imprimeFechaSimple(tiempo.getFechaReset())+"]");
 			entradapass = "";
 			digitalWrite(RESETEAR, HIGH);
 		}
@@ -914,7 +914,7 @@ void resetearEstadoPrevio(){
 	if(estadoAnterior == 1){
 
 		if (EEPROM.read(ALARMA_ACTIVADA) == 1) {
-			registro.registrarEvento("ALARMA ACTIVADA (RESTAURADO ESTADO ANTERIOR)");
+			//registro.registrarEvento("ALARMA ACTIVADA (RESTAURADO ESTADO ANTERIOR)");
 			lcd.clear();
 			rcEstado= false;  //Peligro bucles
 			activar(rcEstado);
@@ -924,7 +924,7 @@ void resetearEstadoPrevio(){
 
 		if (EEPROM.read(ALARMA_SALTADA) == 1) {
 			Serial.println("\nSalto desconocido");
-			registro.registrarEvento("INTRUSISMO ALARMA (RESTAURADO ESTADO ANTERIOR)");
+			//registro.registrarEvento("INTRUSISMO ALARMA (RESTAURADO ESTADO ANTERIOR)");
 
 			delay(9000); //Tiempo de espera para la inicializacion del GSM
 			tiempoOn = millis() + 5000;
@@ -1109,7 +1109,7 @@ void comprobarModos(){
 		if(controlUtv==true){
 
 				 Serial.println("UTV establecida en modo default");
-				 registro.registrarEvento("ALARMA ESTABLECIDA EN MODO DEFAULT");
+				 //registro.registrarEvento("ALARMA ESTABLECIDA EN MODO DEFAULT");
 				 utv_tiempo_off = 80000;
 				 utv_tiempo_off_beta = 10000;
 
@@ -1124,7 +1124,7 @@ void comprobarModos(){
 			}else {
 
 					 Serial.println("UTV establecida en modo prueba");
-					 registro.registrarEvento("ALARMA ESTABLECIDA EN MODO PRUEBA");
+					 //registro.registrarEvento("ALARMA ESTABLECIDA EN MODO PRUEBA");
 					 utv_tiempo_off = 20000;
 					 utv_tiempo_off_beta = 5000;
 

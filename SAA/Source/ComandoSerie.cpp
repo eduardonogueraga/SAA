@@ -7,7 +7,7 @@
 #include "Arduino.h"
 #include "ComandoSerie.h"
 #include <SoftwareSerial.h>
-#include "RegistroDatos.h"
+//#include "RegistroDatos.h"
 #include <IRremote.h>
 #include "Mensajes.h"
 
@@ -77,7 +77,7 @@ void ComandoSerie::controInfraRojo(){
 
 void ComandoSerie::demonioSerie(){
 
-	extern RegistroDatos registro;
+	//extern RegistroDatos registro;
 	extern Mensajes mensaje;
 
 	if (Serial.available() > 0 || bluetooh.available() > 0){
@@ -148,20 +148,20 @@ void ComandoSerie::demonioSerie(){
 		if (data.indexOf("show reg")>=0){
 
 			//Modo
-			registro.mostrarRegistro("REGISTRO");
+			//registro.mostrarRegistro("REGISTRO");
 		}
 
 		if (data.indexOf("show sensor")>=0){
 
 			//Modo
-			registro.mostrarRegistro("SENSORES");
+			//registro.mostrarRegistro("SENSORES");
 
 		}
 
 		if (data.indexOf("show prop")>=0){
 
 			//Modo
-			registro.mostrarRegistro("PROP");
+			//registro.mostrarRegistro("PROP");
 
 		}
 
