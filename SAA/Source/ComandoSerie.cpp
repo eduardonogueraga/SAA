@@ -165,6 +165,13 @@ void ComandoSerie::demonioSerie(){
 
 		}
 
+		if (data.indexOf("show sql")>=0){
+
+			//Modo
+			registro.mostrarRegistro("SQL");
+
+		}
+
 
 		if (data.indexOf("set call")>=0){
 

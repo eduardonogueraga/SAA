@@ -81,12 +81,8 @@
 					if(millis()>tiempoOn){
 						registro.registrarEvento("SEÑAL EN SENSOR "+(String)numero+": "+(String)strike); //Registran los datos en la tarjeta
 						registro.registrarEvento("PIR "+(String)numero+" :"+(String)strike+" ONLINE ");
-
-						registro.registrarEventoBD("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
-								"VALUES ('pir"+(String)numero+"', 'online', 'estandar', '"+tiempo.imprimeFechaSQL()+"');");
-
-						registro.registrarEventoBD("INSERT INTO `saltos` (`intrusismo`, `restaurado`, `entradas_id`, `sensores_id`) "
-								"VALUES ('0', '0',(SELECT max(id) FROM entradas), (SELECT max(id) FROM sensores));");
+						registro.sensorInfoBD("pir "+(String)numero, "online", "estandar");
+						registro.saltoInfoBD("0");
 						// Modificar los inserts para que en update posterior al mensaje se cambien ademas del campo id_mensaje el campo intrusismo
 					}
 
@@ -97,9 +93,8 @@
 					if(millis()>tiempoOn){
 						registro.registrarEvento("SEÑAL EN SENSOR APAGADO "+(String)numero+": "+(String)strike);
 						registro.registrarSensor("PIR "+(String)numero+" :"+(String)strike+" OFFLINE ");
-
-						registro.registrarEventoBD("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
-								"VALUES ('pir"+(String)numero+"', 'offline', 'estandar', '"+tiempo.imprimeFechaSQL()+"');");
+						registro.sensorInfoBD("pir "+(String)numero, "offline", "estandar");
+						registro.saltoInfoBD("0");
 					}
 				}
 			}
@@ -160,15 +155,16 @@
 						registro.registrarEvento("SEÑAL EN PUERTA COCHERA"); //Registran los datos en la tarjeta
 						registro.registrarSensor("SEÑAL EN PUERTA COCHERA ONLINE ");
 
-						registro.registrarEventoBD("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
-								"VALUES ('mg', 'online', 'estandar', '"+tiempo.imprimeFechaSQL()+"');");
+						registro.sensorInfoBD("mg", "online", "estandar");
+						registro.saltoInfoBD("0");
+
 					}
 
 
 				}else{
 					registro.registrarSensor("SEÑAL EN PUERTA COCHERA OFFLINE");
-					registro.registrarEventoBD("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
-							"VALUES ('mg', 'offline', 'estandar', '"+tiempo.imprimeFechaSQL()+"');");
+					registro.sensorInfoBD("mg", "offline", "estandar");
+					registro.saltoInfoBD("0");
 				}
 			}
 		}
@@ -249,17 +245,16 @@
 					_datos.setDatos(numero, strike);
 					registro.registrarEvento("SEÑAL PHANTOM EN SENSOR "+(String)numero+": "+(String)strike);
 					registro.registrarSensor(((numero != 0)? "PIR "+(String)numero:"PUERTA COCHERA")+" :"+(String)strike+" ONLINE/PHANTOM ");
-
-					registro.registrarEventoBD("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
-							"VALUES ('"+((numero != 0)? "pir"+(String)numero:"mg")+"', 'online', 'phantom', '"+tiempo.imprimeFechaSQL()+"');");
+					registro.sensorInfoBD(((numero != 0)? "pir"+(String)numero:"mg"), "online", "phantom");
+					registro.saltoInfoBD("0");
 				}
-
-
 			} else {
 				Serial.print("\nSensor ");
 				Serial.print(numero);
 				Serial.print(" deshabilitado");
 				registro.registrarSensor(((numero != 0)? "PIR "+(String)numero:"PUERTA COCHERA")+" :"+(String)strike+" OFFLINE/PHANTOM ");
+				registro.sensorInfoBD(((numero != 0)? "pir"+(String)numero:"mg"), "offline", "phantom");
+				registro.saltoInfoBD("0");
 			}
 		}
 

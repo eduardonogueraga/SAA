@@ -105,8 +105,8 @@
 			saltoEnviadoHistorico++;
 			EEPROM.update(smsDireccion, saltoEnviadoHistorico);
 
-			registro.registrarEvento("["+Mensajes::getAsunto()+"] MENSAJE ENVIADO");
 			//Mensaje
+			String cuerpoSMS = "";
 			SIM800L.println("AT+CMGF=1");
 			delay(200);
 			SIM800L.println("AT+CMGS=\"+34"+Entorno::getTelefonoMensaje()+"\"");
@@ -114,28 +114,29 @@
 			SIM800L.print(Mensajes::getAsunto()+"\n");
 			Serial.print(Mensajes::getAsunto()+"\n");
 			SIM800L.println(_datos.imprimeDatos());
+			cuerpoSMS.concat(_datos.imprimeDatos()); //Falta desarrollar el cuerpo
 			Serial.println(_datos.imprimeDatos()); //Visor para debug
 
-			if(valiza > 0){ //Bug en el mensaje de Fallo bateria
-				if(rcEstado == true){
-					SIM800L.println("Intentos restantes: "+ (String)(3-auto_rc_intentos)); //SOLO MODO REACTIVACION
-					//Serial.println("Intentos restantes: "+ (String)(3-auto_rc_intentos));
+				if(valiza > 0){ //Bug en el mensaje de Fallo bateria
+					if(rcEstado == true){
+						SIM800L.println("Intentos restantes: "+ (String)(3-auto_rc_intentos)); //SOLO MODO REACTIVACION
+						//Serial.println("Intentos restantes: "+ (String)(3-auto_rc_intentos));
+					}
+				}else if(valiza == 0){
+					SIM800L.println("La alarma no se reactivara con la puerta abierta");
+					//Serial.println("La alarma no se reactivara con la puerta abierta");
+				} else{
+					SIM800L.println("Salto indeterminado");
 				}
-			}else if(valiza == 0){
-				SIM800L.println("La alarma no se reactivara con la puerta abierta");
-				//Serial.println("La alarma no se reactivara con la puerta abierta");
-			} else{
-				SIM800L.println("Salto indeterminado");
-			}
 
-			if(digitalRead(2) == LOW){ //SENSOR_BATERIA_EMERGENCIA
-				SIM800L.println("Bateria de emergencia desactivada");
-			}
+				if(digitalRead(2) == LOW){ //SENSOR_BATERIA_EMERGENCIA
+					SIM800L.println("Bateria de emergencia desactivada");
+				}
 
-			if(digitalRead(19) == HIGH){ //SENSOR_BATERIA_PRINCIPAL
-				SIM800L.println(tiempo.imprimeFecha()); //RTC no disponible con bateria de emergencia
-				//Serial.println(tiempo.imprimeFecha());
-			}
+				if(digitalRead(19) == HIGH){ //SENSOR_BATERIA_PRINCIPAL
+					SIM800L.println(tiempo.imprimeFecha()); //RTC no disponible con bateria de emergencia
+					//Serial.println(tiempo.imprimeFecha());
+				}
 			Serial.println("\nOK");
 			delay(200);
 			SIM800L.print((char)26);
@@ -144,11 +145,25 @@
 			delay(200);
 
 			EEPROM.write(5,(EEPROM.read(5))+1); //Suma uno al contador
+
+			registro.registrarEvento("["+Mensajes::getAsunto()+"] MENSAJE ENVIADO");
 			registro.registrarEvento("INTENTOS SMS REALIZADOS: "+(String)EEPROM.read(5));
+			registro.intentosRealizadosInfoBD((String)EEPROM.read(5));
+
+				if(Mensajes::getAsunto().indexOf("AVISO") >=0){
+					//Mensaje de aviso intrusismo
+					registro.mensajeInfoBD("salto", Mensajes::getAsunto(), "");
+					registro.updateSaltoInfoBD();
+				}else{
+					//Mensaje de reactivacion
+					registro.mensajeInfoBD("info", Mensajes::getAsunto(), "");
+					registro.updateEntradaInfoBD();
+				}
 
 		}else{
 			Serial.println("Intentos diarios acabados");
 			registro.registrarEvento("INTENTOS SMS DIARIOS ACABADOS");
+			registro.intentosAcabadosInfoBD();
 		}
 
 
@@ -207,7 +222,7 @@
 	}
 
 
-	void Mensajes::realizarLlamada(bool estado, byte telefono){
+	void Mensajes::realizarLlamada(bool estado, byte telefono){ //Implementar insert para llamadas en tabla alarma
 
 		extern SoftwareSerial SIM800L;
 

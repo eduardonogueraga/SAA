@@ -222,7 +222,8 @@ long modo_sensible_tiempo = 0;
 
  //Cupo de mensajes diarios maximos
  #define MENSAJES_ENVIADOS 5
- const unsigned int LIMITE_MAXIMO = 15; //MDBUG Cupo de SMS q se pueden mandar en un dia
+ // @develop ('SMS ilimitado')
+ const unsigned int LIMITE_MAXIMO = 5000; //MDBUG Cupo de SMS q se pueden mandar en un dia
 
 
 //Variables de tiempo UTV
@@ -313,8 +314,7 @@ if ((EEPROM.read(ALARMA_ACTIVADA) == 1) || (EEPROM.read(ALARMA_SALTADA) == 1)){
 	}
 
 
-registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) "
-			"VALUES ('ALARMA INICIADA', '"+tiempo.imprimeFechaSQL()+"');");
+registro.inicioAlarmaBD();
 
 //Info de inicio
 
@@ -348,12 +348,10 @@ void loop() {
  if(digitalRead(SENSOR_BATERIA) != sensorBateriaAnterior){
 	 if(digitalRead(SENSOR_BATERIA) == HIGH){
 		 registro.registrarEvento("ACTIVADA BATERIA DE EMERGENCIA");
-		 registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) VALUES "
-				 	 "('ACTIVADA BATERIA DE EMERGENCIA', '"+tiempo.imprimeFechaSQL()+"');");
+		 registro.bateriaEmergenciaInfoBD("activada");
 	 } else{
 		 registro.registrarEvento("DESACTIVADA BATERIA DE EMERGENCIA");
-		 registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) VALUES "
-				 "('DESACTIVADA BATERIA DE EMERGENCIA', '"+tiempo.imprimeFechaSQL()+"');");
+		 registro.bateriaEmergenciaInfoBD("desactivada");
 	 }
 
  }
@@ -368,8 +366,7 @@ void loop() {
 		 if(EEPROM.read(MENSAJES_ENVIADOS) != 0){
 			 EEPROM.write(MENSAJES_ENVIADOS,0);
 			 registro.registrarEvento("INTENTOS SMS DIARIOS RECUPERADOS");
-			 registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) "
-					 "VALUES ('INTENTOS SMS DIARIOS RECUPERADOS', '"+tiempo.imprimeFechaSQL()+"');");
+			 registro.intentosRecuperadosInfoBD();
 			 Serial.println("Intentos diarios recuperados");
 		 }
 	 }
@@ -732,8 +729,7 @@ void activar(bool estado_rc){
 
 		Serial.println("\nAlarma activada automaticamente");
 		registro.registrarEvento("ALARMA ACTIVADA AUTOMATICAMENTE");
-		registro.registrarEventoBD("INSERT INTO `saabd`.`entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
-		" `fecha`) VALUES ('activacion', 'auto', '0', '"+(String)(3-auto_rc_intentos)+"', '"+tiempo.imprimeFechaSQL()+"');");
+		registro.activarAlarmaBD("auto", (String)(3-auto_rc_intentos));
 
 		if(controlUtv==false){ 	//false para debug unicamente MDBUG
 			bocinaTiempo = millis() + 480000;	//Reduccion del tiempo de bocina durante reactivaciones
@@ -747,8 +743,7 @@ void activar(bool estado_rc){
 		} else{
 			Serial.println("\nAlarma activada manualmente");
 			registro.registrarEvento("ALARMA ACTIVADA MANUALMENTE");
-			registro.registrarEventoBD("INSERT INTO `saabd`.`entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
-			" `fecha`) VALUES ('activacion', 'manual', '0', '"+(String)(3-auto_rc_intentos)+"', '"+tiempo.imprimeFechaSQL()+"');");
+			registro.activarAlarmaBD("manual", (String)(3-auto_rc_intentos));
 			EEPROM.write(CONTROL_INTERRUPCION, 1); //Una interrupcion por cada activacion manual
 		}
 
@@ -785,13 +780,11 @@ void desactivar(bool estado_rc){
 	if(estado_rc){
 		Serial.println("\nAlarma desactivada automaticamente");
 		registro.registrarEvento("ALARMA DESACTIVADA AUTOMATICAMENTE");
-		registro.registrarEventoBD("INSERT INTO `saabd`.`entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
-		" `fecha`) VALUES ('desactivacion', 'auto', '0', '"+(String)(3-auto_rc_intentos)+"', '"+tiempo.imprimeFechaSQL()+"');");
+		registro.desactivarAlarmaBD("auto", (String)(3-auto_rc_intentos));
 	} else{
 		Serial.println("\nAlarma desactivada manualmente");
 		registro.registrarEvento("ALARMA DESACTIVADA MANUALMENTE");
-		registro.registrarEventoBD("INSERT INTO `saabd`.`entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
-			" `fecha`) VALUES ('desactivacion', 'manual', '0', '"+(String)(3-auto_rc_intentos)+"', '"+tiempo.imprimeFechaSQL()+"');");
+		registro.desactivarAlarmaBD("manual", (String)(3-auto_rc_intentos));
 	}
 
     modo_sensible = false;//Apaga el modo sensible
@@ -1147,8 +1140,7 @@ void comprobarModos(){
 
 				 Serial.println("UTV establecida en modo default");
 				 registro.registrarEvento("ALARMA ESTABLECIDA EN MODO DEFAULT");
-				 registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) "
-				 			"VALUES ('ALARMA ESTABLECIDA EN MODO DEFAULT', '"+tiempo.imprimeFechaSQL()+"');");
+				 registro.modoAlarmaInfoBD("default");
 				 utv_tiempo_off = 80000;
 				 utv_tiempo_off_beta = 10000;
 
@@ -1164,8 +1156,7 @@ void comprobarModos(){
 
 					 Serial.println("UTV establecida en modo prueba");
 					 registro.registrarEvento("ALARMA ESTABLECIDA EN MODO PRUEBA");
-					 registro.registrarEventoBD("INSERT INTO `alarma` (`descripcion`, `fecha`) "
-					 			"VALUES ('ALARMA ESTABLECIDA EN MODO PRUEBA', '"+tiempo.imprimeFechaSQL()+"');");
+					 registro.modoAlarmaInfoBD("prueba");
 					 utv_tiempo_off = 20000;
 					 utv_tiempo_off_beta = 5000;
 

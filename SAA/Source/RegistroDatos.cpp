@@ -9,7 +9,6 @@
 #include <SPI.h>
 #include <SD.h>
 
-#include "Fecha.h"
 
 #define SSpin 53 //Pin esclavo del SD
 
@@ -37,8 +36,6 @@ void RegistroDatos::iniciarSd(){
 
 void RegistroDatos::generarFichero(){
 
-	extern Fecha tiempo;
-
 	fichero = SD.open("REGISTRO.txt", FILE_WRITE); //TODO crear otro documento que atestigue el funcionamiento de la alarma
 
 
@@ -54,6 +51,7 @@ void RegistroDatos::generarFichero(){
 
 void RegistroDatos::registrarEventoBD(String sentenciaSQL){
 
+
 	fichero = SD.open("SQL.txt", FILE_WRITE);
 
 	if (fichero) {
@@ -61,14 +59,12 @@ void RegistroDatos::registrarEventoBD(String sentenciaSQL){
 		fichero.close();
 
 	} else {
-		//Serial.println("Error en apertura del archivo SD");  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 	}
 
 }
 
 void RegistroDatos::registrarEvento(String descripcion){
-
-	extern Fecha tiempo;
 
 	fichero = SD.open("REGISTRO.txt", FILE_WRITE); //REGISTRO
 
@@ -77,7 +73,7 @@ void RegistroDatos::registrarEvento(String descripcion){
 		fichero.close();
 
 	} else {
-		//Serial.println("Error en apertura del archivo SD");  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		Serial.println("Error en apertura del archivo SD");  //@develop("Omitir el fallo por SD cuando no esta conectado")
 	}
 
 
@@ -86,7 +82,6 @@ void RegistroDatos::registrarEvento(String descripcion){
 
 void RegistroDatos::registrarSensor(String descripcion){
 
-	extern Fecha tiempo;
 
 	fichero = SD.open("SENSORES.txt", FILE_WRITE);
 
@@ -95,10 +90,187 @@ void RegistroDatos::registrarSensor(String descripcion){
 		fichero.close();
 
 	} else {
-		// Serial.println("Error en apertura del archivo SD"); //@develop("Omitir el fallo por SD cuando no esta conectado")
+		 Serial.println("Error en apertura del archivo SD"); //@develop("Omitir el fallo por SD cuando no esta conectado")
 	}
 
 
+}
+
+void RegistroDatos::inicioAlarmaBD(){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+		if (fichero) {
+			fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
+			"VALUES ('ALARMA INICIADA', '"+tiempo.imprimeFechaSQL()+"');");
+			fichero.close();
+		} else {
+			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		}
+
+}
+
+void RegistroDatos::bateriaEmergenciaInfoBD(String estado){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+	estado.toUpperCase();
+
+		if (fichero) {
+			fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) VALUES "
+				 	 "('"+estado+" BATERIA DE EMERGENCIA', '"+tiempo.imprimeFechaSQL()+"');");
+			fichero.close();
+		} else {
+			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		}
+}
+
+void RegistroDatos::intentosRecuperadosInfoBD(){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+		if (fichero) {
+			fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
+					 "VALUES ('INTENTOS SMS DIARIOS RECUPERADOS', '"+tiempo.imprimeFechaSQL()+"');");
+			fichero.close();
+		} else {
+			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		}
+
+}
+
+void RegistroDatos::intentosRealizadosInfoBD(String intentos){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+		if (fichero) {
+			fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
+					 "VALUES ('INTENTOS SMS REALIZADOS: "+intentos+"', '"+tiempo.imprimeFechaSQL()+"');");
+			fichero.close();
+		} else {
+			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		}
+
+}
+
+
+void RegistroDatos::intentosAcabadosInfoBD(){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+		if (fichero) {
+			fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
+					 "VALUES ('INTENTOS SMS DIARIOS ACABADOS', '"+tiempo.imprimeFechaSQL()+"');");
+			fichero.close();
+		} else {
+			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		}
+
+}
+
+void RegistroDatos::activarAlarmaBD(String modo, String intentos){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+		if (fichero) {
+			fichero.println("INSERT INTO `entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
+		" `fecha`) VALUES ('activacion', '"+modo+"', '0', '"+intentos+"', '"+tiempo.imprimeFechaSQL()+"');");
+			fichero.close();
+		} else {
+			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		}
+}
+
+
+void RegistroDatos::desactivarAlarmaBD(String modo, String intentos){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+		if (fichero) {
+			fichero.println("INSERT INTO `entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
+		" `fecha`) VALUES ('desactivacion', '"+modo+"', '0', '"+intentos+"', '"+tiempo.imprimeFechaSQL()+"');");
+			fichero.close();
+		} else {
+			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		}
+}
+
+void RegistroDatos::modoAlarmaInfoBD(String modo){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+	modo.toUpperCase();
+
+			if (fichero) {
+				fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
+				 			"VALUES ('ALARMA ESTABLECIDA EN MODO "+modo+"', '"+tiempo.imprimeFechaSQL()+"');");
+				fichero.close();
+			} else {
+				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+			}
+}
+
+void RegistroDatos::sensorInfoBD(String tipo, String estado, String modo){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+			if (fichero) {
+				fichero.println("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
+						"VALUES ('"+tipo+"', '"+estado+"', '"+modo+"', '"+tiempo.imprimeFechaSQL()+"');");
+				fichero.close();
+			} else {
+				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+			}
+}
+
+void RegistroDatos::saltoInfoBD(String restaurado){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+			if (fichero) {
+				fichero.println("INSERT INTO `saltos` (`intrusismo`, `restaurado`, `entradas_id`, `sensores_id`) "
+						"VALUES ('0', '"+restaurado+"',(SELECT max(id) FROM entradas), (SELECT max(id) FROM sensores));");
+				fichero.close();
+			} else {
+				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+			}
+}
+
+void RegistroDatos::mensajeInfoBD(String tipo, String asunto, String cuerpo){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+			if (fichero) {
+				fichero.println("INSERT INTO `mensajes` (`tipo`, `asunto`, `cuerpo`, `fecha_sms`) "
+						"VALUES ('"+tipo+"', '"+asunto+"', '"+cuerpo+"', '"+tiempo.imprimeFechaSQL()+"');");
+				fichero.close();
+			} else {
+				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+			}
+}
+
+void RegistroDatos::updateSaltoInfoBD(){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+			if (fichero) {
+				fichero.println("UPDATE `saltos` SET `intrusismo` = '1', `mensajes_id` = (SELECT max(id) FROM mensajes) "
+						"WHERE (id = (SELECT * FROM(SELECT max(id) FROM saltos) as ultimo_id));");
+				fichero.close();
+			} else {
+				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+			}
+}
+
+void RegistroDatos::updateEntradaInfoBD(){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+			if (fichero) {
+				fichero.println("UPDATE `entradas` SET `mensajes_id` = (SELECT max(id) FROM mensajes) "
+						"WHERE (id = (SELECT * FROM(SELECT max(id) FROM entradas) as ultimo_id));");
+				fichero.close();
+			} else {
+				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+			}
 }
 
 void RegistroDatos::mostrarRegistro(String nom){
