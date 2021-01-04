@@ -273,6 +273,19 @@ void RegistroDatos::updateEntradaInfoBD(){
 			}
 }
 
+void RegistroDatos::llamadaInfoBD(String nombre){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+			if (fichero) {
+				fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
+						"VALUES ('LLAMANDO A: "+nombre+"', '"+tiempo.imprimeFechaSQL()+"');");
+				fichero.close();
+			} else {
+				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+			}
+}
+
 void RegistroDatos::mostrarRegistro(String nom){
 
 

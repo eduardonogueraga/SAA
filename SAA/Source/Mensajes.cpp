@@ -97,9 +97,7 @@
 		extern int saltoEnviadoHistorico;
 		extern byte smsDireccion;
 
-
 		if(EEPROM.read(5) < LIMITE_MAXIMO ){ //MENSAJES_ENVIADOS
-
 
 			saltoEnviadoHistorico =  EEPROM.read(smsDireccion);
 			saltoEnviadoHistorico++;
@@ -114,7 +112,9 @@
 			SIM800L.print(Mensajes::getAsunto()+"\n");
 			Serial.print(Mensajes::getAsunto()+"\n");
 			SIM800L.println(_datos.imprimeDatos());
-			cuerpoSMS.concat(_datos.imprimeDatos()); //Falta desarrollar el cuerpo
+			//cuerpoSMS.concat(_datos.imprimeDatos()); //Falta desarrollar el cuerpo
+			//cuerpoSMS.replace("\n", "-");
+			//Serial.println(cuerpoSMS);
 			Serial.println(_datos.imprimeDatos()); //Visor para debug
 
 				if(valiza > 0){ //Bug en el mensaje de Fallo bateria
@@ -166,8 +166,6 @@
 			registro.intentosAcabadosInfoBD();
 		}
 
-
-
 	}
 
 
@@ -187,7 +185,6 @@
 			saltoEnviadoHistorico++;
 			EEPROM.update(smsDireccion, saltoEnviadoHistorico);
 
-			registro.registrarEvento("["+Mensajes::getAsunto()+"] MENSAJE ENVIADO");
 			//Mensaje
 			SIM800L.println("AT+CMGF=1");
 			delay(200);
@@ -211,10 +208,16 @@
 			delay(200);
 
 			EEPROM.write(5,(EEPROM.read(5))+1); //Suma uno al contador
+			registro.registrarEvento("["+Mensajes::getAsunto()+"] MENSAJE ENVIADO");
 			registro.registrarEvento("INTENTOS SMS REALIZADOS: "+(String)EEPROM.read(5));
+			registro.intentosRealizadosInfoBD((String)EEPROM.read(5));
+
+			registro.mensajeInfoBD("info", Mensajes::getAsunto(), mensaje);
+			registro.updateEntradaInfoBD();
 		}else{
 			Serial.println("Intentos diarios acabados");
 			registro.registrarEvento("INTENTOS SMS DIARIOS ACABADOS");
+			registro.intentosAcabadosInfoBD();
 		}
 
 
@@ -222,9 +225,10 @@
 	}
 
 
-	void Mensajes::realizarLlamada(bool estado, byte telefono){ //Implementar insert para llamadas en tabla alarma
+	void Mensajes::realizarLlamada(bool estado, byte telefono){
 
 		extern SoftwareSerial SIM800L;
+		extern RegistroDatos registro;
 
 		if(estado){
 			Serial.println("Llamando");
@@ -233,9 +237,11 @@
 
 			if(telefono ==1){
 				SIM800L.println("ATD+ +34"+Entorno::getTelefonoLlamada(1)+";");
+				registro.llamadaInfoBD("Mi movil");
 			}
 			if(telefono ==2){
 				SIM800L.println("ATD+ +34"+Entorno::getTelefonoLlamada(2)+";");
+				registro.llamadaInfoBD("Movil 2");
 			}
 
 			delay(200);
