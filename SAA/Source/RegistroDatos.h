@@ -41,7 +41,12 @@ public:
 	void mensajeInfoBD(String tipo, String asunto, String cuerpo);
 	void updateSaltoInfoBD(); //Actualiza el ultimo salto como intrusismo
 	void updateEntradaInfoBD();
+	void updateErroresInfoBD();
+	void updateEntradaRestauradaBD();
+	void updateSaltoRestauradoBD();
 	void llamadaInfoBD(String nombre);
+	void resetInfoBD(String modo);
+	void errorInfoBD(String descripcion);
 	void mostrarRegistro(String nom);
 	void leerPropiedades();
 	String getPropiedades();

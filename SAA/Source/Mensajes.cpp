@@ -85,7 +85,7 @@
 	}
 
 
-	void  Mensajes::enviarMensaje(Datos &_datos){
+	void  Mensajes::enviarMensaje(Datos &_datos, String tipo){
 
 		extern byte auto_rc_intentos;
 		extern bool rcEstado;
@@ -150,16 +150,20 @@
 			registro.registrarEvento("INTENTOS SMS REALIZADOS: "+(String)EEPROM.read(5));
 			registro.intentosRealizadosInfoBD((String)EEPROM.read(5));
 
-				if(Mensajes::getAsunto().indexOf("AVISO") >=0){
-					//Mensaje de aviso intrusismo
-					registro.mensajeInfoBD("salto", Mensajes::getAsunto(), "");
-					registro.updateSaltoInfoBD();
-				}else{
-					//Mensaje de reactivacion
-					registro.mensajeInfoBD("info", Mensajes::getAsunto(), "");
-					registro.updateEntradaInfoBD();
-				}
+			registro.mensajeInfoBD(tipo, Mensajes::getAsunto(), "");
 
+				if(tipo == "salto"){
+					//Mensaje de aviso intrusismo
+					registro.updateSaltoInfoBD();
+				}else if(tipo == "info"){
+					//Mensaje de reactivacion
+					registro.updateEntradaInfoBD();
+				}else if(tipo == "error"){
+					//Mensaje de reactivacion
+					registro.updateErroresInfoBD();
+				}else{
+					Serial.println("Tipo de mensaje incorrecto");
+				}
 		}else{
 			Serial.println("Intentos diarios acabados");
 			registro.registrarEvento("INTENTOS SMS DIARIOS ACABADOS");
@@ -169,7 +173,7 @@
 	}
 
 
-	void  Mensajes::enviarMensaje(String mensaje){
+	void  Mensajes::enviarMensaje(String mensaje, String tipo){
 
 		extern SoftwareSerial SIM800L;
 		extern Fecha tiempo;
@@ -212,15 +216,25 @@
 			registro.registrarEvento("INTENTOS SMS REALIZADOS: "+(String)EEPROM.read(5));
 			registro.intentosRealizadosInfoBD((String)EEPROM.read(5));
 
-			registro.mensajeInfoBD("info", Mensajes::getAsunto(), mensaje);
-			registro.updateEntradaInfoBD();
+			registro.mensajeInfoBD(tipo, Mensajes::getAsunto(), mensaje);
+
+				if(tipo == "salto"){
+					//Mensaje de aviso intrusismo
+					registro.updateSaltoInfoBD();
+				}else if(tipo == "info"){
+					//Mensaje de reactivacion
+					registro.updateEntradaInfoBD();
+				}else if(tipo == "error"){
+					//Mensaje de reactivacion
+					registro.updateErroresInfoBD();
+				}else{
+					Serial.println("Tipo de mensaje incorrecto");
+				}
 		}else{
 			Serial.println("Intentos diarios acabados");
 			registro.registrarEvento("INTENTOS SMS DIARIOS ACABADOS");
 			registro.intentosAcabadosInfoBD();
 		}
-
-
 
 	}
 

@@ -660,7 +660,7 @@ if (ladrones){
 			if(controlUtv==false){  //false para debug   //ACCESO A GSM MDBUG
 
 				mensaje.setAsuntoPir(datos);   // Mensaje PIR
-				mensaje.enviarMensaje(datos);  //Registro principal
+				mensaje.enviarMensaje(datos, "salto");  //Registro principal
 
 				mensaje.setTiempoLlamada(millis()+50000); //Abre los tiempos para llamar
 				saltoEnviado++;
@@ -871,6 +871,7 @@ void mensajeError(volatile byte &Error){
 			if(EEPROM.read(CONTROL_INTERRUPCION) == 1){
 
 				registro.registrarEvento("INTERRUPCION POR FALLO EN ALIMENTACION PRINCIPAL");
+				registro.errorInfoBD("INTERRUPCION POR FALLO EN ALIMENTACION PRINCIPAL");
 
 				desactivar(false);
 				EEPROM.write(ALARMA_ACTIVADA, 0); //Estado de activacion desactivado
@@ -881,15 +882,13 @@ void mensajeError(volatile byte &Error){
 				sleepmode_gsm = 2; //Lo mantiene encendido
 				delay(7000); //Delay que espere al encendido del la alimentacion
 
-
 					if(datos.comprobarDatos()){
 						mensaje.setAsunto("MOVIMIENTO DETECTADO Y SABOTAJE EN LA ALIMENTACION");
-
 					}else{
 						mensaje.setAsunto("FALLO EN LA ALIMENTACION PRINCIPAL");
-
 					}
-				mensaje.enviarMensaje(datos);
+
+				mensaje.enviarMensaje(datos, "error");
 				mensaje.setTiempoLlamada(millis()+65000);
 
 
@@ -912,6 +911,7 @@ void mensajeError(volatile byte &Error){
 void resetear(){
 	Serial.println("\nRESETEANDO");
 	registro.registrarEvento("ALARMA RESETEADA");
+	registro.resetInfoBD("manual");
 	entradapass = "";
 	EEPROM.write(ALARMA_ACTIVADA, 0); //Estado de activacion desactivado
 	EEPROM.write(ALARMA_SALTADA, 0); //Estado de salto sin salto
@@ -925,6 +925,7 @@ void resetAutomatico(){
 		if(tiempo.comprobarHora(16, 30)){
 			Serial.println("\nRESET PROGRAMADO DEL SISTEMA");
 			registro.registrarEvento("RESET PROGRAMADO CON FECHA ["+tiempo.imprimeFechaSimple(tiempo.getFechaReset())+"]");
+			registro.resetInfoBD("auto");
 			entradapass = "";
 			digitalWrite(RESETEAR, HIGH);
 		}
@@ -944,23 +945,25 @@ void resetearEstadoPrevio(){
 	if(estadoAnterior == 1){
 
 		if (EEPROM.read(ALARMA_ACTIVADA) == 1) {
-			registro.registrarEvento("ALARMA ACTIVADA (RESTAURADO ESTADO ANTERIOR)");
 			lcd.clear();
 			rcEstado= false;  //Peligro bucles
 			activar(rcEstado);
 			tiempoOn = millis() + 5000;
 
+			registro.registrarEvento("ALARMA ACTIVADA (RESTAURADO ESTADO ANTERIOR)");
+			registro.updateEntradaRestauradaBD();
 		}
 
 		if (EEPROM.read(ALARMA_SALTADA) == 1) {
 			Serial.println("\nSalto desconocido");
 			registro.registrarEvento("INTRUSISMO ALARMA (RESTAURADO ESTADO ANTERIOR)");
+			registro.updateSaltoRestauradoBD(); //Se marca el ultimo salto como restaurado
 
 			delay(9000); //Tiempo de espera para la inicializacion del GSM
 			tiempoOn = millis() + 5000;
 			mensaje.setAsunto("AVISO ALARMA PRESENCIA DESCONOCIDA");
 			mensaje.enviarMensaje("La alarma ha saltado en sensor "+(String)EEPROM.read(SENSOR_SALTADO)+" pero se ha reiniciado durante proceso deteccion. "
-					+((EEPROM.read(SENSOR_SALTADO)==0)?("Puerta abierta, alarma apagada por seguridad"):("Alarma reactivada")));
+					+((EEPROM.read(SENSOR_SALTADO)==0)?("Puerta abierta, alarma apagada por seguridad"):("Alarma reactivada")), "salto");
 			bocinaTiempo = millis() + utv_tiempo_bocina;
 			bocina.iniciarBocina(5000, bocinaTiempo);
 
@@ -1123,7 +1126,7 @@ void activacionAutomatica(){
 			if(controlUtv==false){   //false para debug unicamente MDBUG //ACCESO A GSM
 
 				mensaje.setAsunto("ALARMA REACTIVDA CON EXITO");
-				mensaje.enviarMensaje(datosPhantom); //Esta vez con los datos del phantom
+				mensaje.enviarMensaje(datosPhantom, "info"); //Esta vez con los datos del phantom
 				datosPhantom.borraDatos(); //Elimina el registro previo
 
 			}

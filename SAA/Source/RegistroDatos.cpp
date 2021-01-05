@@ -194,6 +194,7 @@ void RegistroDatos::desactivarAlarmaBD(String modo, String intentos){
 		}
 }
 
+
 void RegistroDatos::modoAlarmaInfoBD(String modo){
 
 	fichero = SD.open("SQL.txt", FILE_WRITE);
@@ -273,6 +274,47 @@ void RegistroDatos::updateEntradaInfoBD(){
 			}
 }
 
+
+void RegistroDatos::updateErroresInfoBD(){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+			if (fichero) {
+				fichero.println("UPDATE `errores` SET `mensajes_id` = (SELECT max(id) FROM mensajes) "
+						"WHERE (id = (SELECT * FROM(SELECT max(id) FROM errores) as ultimo_id));");
+				fichero.close();
+			} else {
+				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+			}
+}
+
+void RegistroDatos::updateEntradaRestauradaBD(){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+			if (fichero) {
+				fichero.println("UPDATE `entradas` SET `restaurado` = '1' "
+						"WHERE (id = (SELECT * FROM(SELECT max(id) FROM entradas) as ultimo_id));");
+				fichero.close();
+			} else {
+				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+			}
+}
+
+
+void RegistroDatos::updateSaltoRestauradoBD(){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+			if (fichero) {
+				fichero.println("UPDATE `saltos` SET `restaurado` = '1' "
+						"WHERE (id = (SELECT * FROM(SELECT max(id) FROM saltos) as ultimo_id));");
+				fichero.close();
+			} else {
+				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+			}
+}
+
 void RegistroDatos::llamadaInfoBD(String nombre){
 
 	fichero = SD.open("SQL.txt", FILE_WRITE);
@@ -284,6 +326,33 @@ void RegistroDatos::llamadaInfoBD(String nombre){
 			} else {
 				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
+}
+
+void RegistroDatos::resetInfoBD(String modo){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+				if (fichero) {
+					fichero.println("INSERT INTO `reset` (`modo`, `fecha`) "
+							"VALUES ('"+modo+"', '"+tiempo.imprimeFechaSQL()+"');");
+					fichero.close();
+				} else {
+					Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+				}
+}
+
+
+void RegistroDatos::errorInfoBD(String descripcion){
+
+	fichero = SD.open("SQL.txt", FILE_WRITE);
+
+				if (fichero) {
+					fichero.println("INSERT INTO `errores` (`descripcion`, `fecha`) "
+							"VALUES ('"+descripcion+"', '"+tiempo.imprimeFechaSQL()+"');");
+					fichero.close();
+				} else {
+					Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+				}
 }
 
 void RegistroDatos::mostrarRegistro(String nom){

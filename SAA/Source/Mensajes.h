@@ -36,8 +36,8 @@ public:
 	unsigned long getTiempoLlamada();
 	void setTiempoLlamada(unsigned long tiempoLlamada);
 	void setAsuntoPir(Datos &_datos);
-	void enviarMensaje(Datos &_datos);
-	void enviarMensaje(String mensaje); //Sobrecarga
+	void enviarMensaje(Datos &_datos, String tipo);
+	void enviarMensaje(String mensaje, String tipo); //Sobrecarga
 	void realizarLlamada(bool estado, byte telfono);
 
 };
