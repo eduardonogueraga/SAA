@@ -293,8 +293,7 @@ void RegistroDatos::updateEntradaRestauradaBD(){
 	fichero = SD.open("SQL.txt", FILE_WRITE);
 
 			if (fichero) {
-				fichero.println("UPDATE `entradas` SET `restaurado` = '1' "
-						"WHERE (id = (SELECT * FROM(SELECT max(id) FROM entradas) as ultimo_id));");
+				fichero.println("UPDATE `entradas` SET `restaurado` = '1' WHERE (id = (SELECT * FROM(SELECT max(id) FROM entradas) as ultimo_id));");
 				fichero.close();
 			} else {
 				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
@@ -307,8 +306,7 @@ void RegistroDatos::updateSaltoRestauradoBD(){
 	fichero = SD.open("SQL.txt", FILE_WRITE);
 
 			if (fichero) {
-				fichero.println("UPDATE `saltos` SET `restaurado` = '1' "
-						"WHERE (id = (SELECT * FROM(SELECT max(id) FROM saltos) as ultimo_id));");
+				fichero.println("UPDATE `saltos` SET `restaurado` = '1' WHERE (id = (SELECT * FROM(SELECT max(id) FROM saltos) as ultimo_id));");
 				fichero.close();
 			} else {
 				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")

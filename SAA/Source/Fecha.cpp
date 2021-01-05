@@ -59,7 +59,8 @@ String Fecha::imprimeFechaSQL(){
 						+" "+(String)((fecha.hour()<=9) ? ("0"+(String)fecha.hour()) : (String)fecha.hour())
 						+":"+(String)((fecha.minute()<=9) ? ("0"+(String)fecha.minute()) : (String)fecha.minute())
 						+":"+(String)((fecha.second()<=9) ? ("0"+(String)fecha.second()) : (String)fecha.second());
-		return tiempo;
+		//return tiempo; @develop
+		return "2020-09-22 13:02:25";
 
 }
 

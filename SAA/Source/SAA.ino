@@ -18,11 +18,13 @@
  * Despues del intrusismo lanza un falso aviso de bateria de emergencia (En algunas se rompe la fecha en otras no)
  * La fecha del reset atrasa un dia
  *
+ *	Los updates de restauracion crahsean (@errror)
+ *
  */
 
 //Version-info
 String version_software = "DEVELOP  VE19R1 ";
-String fecha = "01/01/21";
+String fecha = "05/01/21";
 
 
 #include "Arduino.h"
@@ -945,19 +947,20 @@ void resetearEstadoPrevio(){
 	if(estadoAnterior == 1){
 
 		if (EEPROM.read(ALARMA_ACTIVADA) == 1) {
+			registro.registrarEvento("ALARMA ACTIVADA (RESTAURADO ESTADO ANTERIOR)");
+			//registro.updateEntradaRestauradaBD(); //@error
+
 			lcd.clear();
 			rcEstado= false;  //Peligro bucles
 			activar(rcEstado);
 			tiempoOn = millis() + 5000;
 
-			registro.registrarEvento("ALARMA ACTIVADA (RESTAURADO ESTADO ANTERIOR)");
-			registro.updateEntradaRestauradaBD();
 		}
 
 		if (EEPROM.read(ALARMA_SALTADA) == 1) {
 			Serial.println("\nSalto desconocido");
 			registro.registrarEvento("INTRUSISMO ALARMA (RESTAURADO ESTADO ANTERIOR)");
-			registro.updateSaltoRestauradoBD(); //Se marca el ultimo salto como restaurado
+			//registro.updateSaltoRestauradoBD(); //Se marca el ultimo salto como restaurado @error
 
 			delay(9000); //Tiempo de espera para la inicializacion del GSM
 			tiempoOn = millis() + 5000;
