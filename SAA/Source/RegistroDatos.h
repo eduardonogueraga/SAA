@@ -18,7 +18,7 @@ class RegistroDatos {
 
 private:
 	File fichero;
-	String sdErrorMessage = "Error en apertura del archivo SD";
+	//String sdErrorMessage = "Error en apertura del archivo SD";
 
 public:
 	RegistroDatos();
@@ -52,6 +52,8 @@ public:
 	String getPropiedades();
 	int getValorPropiedad(String nombreVar);
 	String getValue(String data, char separator, int index);
+
+	void truncateRegistro(String archivo);
 
 };
 

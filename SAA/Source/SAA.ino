@@ -326,6 +326,10 @@ Serial.println(fecha);
 Serial.println("UTV, GSM, MDBUG");
 Serial.println("set on, set off, set mode");
 
+Serial.println("control de interrupcion "+ String(EEPROM.read(CONTROL_INTERRUPCION)));
+Serial.println("alarma activada "+String(EEPROM.read(ALARMA_ACTIVADA)));
+Serial.println("alarma saltada "+String(EEPROM.read(ALARMA_SALTADA)));
+
 
 //Perido de reset automatico
 
@@ -696,7 +700,7 @@ if (ladrones){
  comprobarModos();
 
 //EEPROM ESTADO ANTERIOR ALARMA
- resetearEstadoPrevio();
+ //resetearEstadoPrevio(); //@ibai
 
 //GESTION DE ERRORES
  mensajeError(codigoError);
@@ -873,7 +877,7 @@ void mensajeError(volatile byte &Error){
 			if(EEPROM.read(CONTROL_INTERRUPCION) == 1){
 
 				registro.registrarEvento("INTERRUPCION POR FALLO EN ALIMENTACION PRINCIPAL");
-				registro.errorInfoBD("INTERRUPCION POR FALLO EN ALIMENTACION PRINCIPAL");
+				//registro.errorInfoBD("INTERRUPCION POR FALLO EN ALIMENTACION PRINCIPAL"); //@ibai
 
 				desactivar(false);
 				EEPROM.write(ALARMA_ACTIVADA, 0); //Estado de activacion desactivado
@@ -913,7 +917,7 @@ void mensajeError(volatile byte &Error){
 void resetear(){
 	Serial.println("\nRESETEANDO");
 	registro.registrarEvento("ALARMA RESETEADA");
-	registro.resetInfoBD("manual");
+	registro.resetInfoBD("manual"); //@ibai
 	entradapass = "";
 	EEPROM.write(ALARMA_ACTIVADA, 0); //Estado de activacion desactivado
 	EEPROM.write(ALARMA_SALTADA, 0); //Estado de salto sin salto
@@ -927,7 +931,7 @@ void resetAutomatico(){
 		if(tiempo.comprobarHora(16, 30)){
 			Serial.println("\nRESET PROGRAMADO DEL SISTEMA");
 			registro.registrarEvento("RESET PROGRAMADO CON FECHA ["+tiempo.imprimeFechaSimple(tiempo.getFechaReset())+"]");
-			registro.resetInfoBD("auto");
+			registro.resetInfoBD("auto"); //@ibai
 			entradapass = "";
 			digitalWrite(RESETEAR, HIGH);
 		}
@@ -948,7 +952,7 @@ void resetearEstadoPrevio(){
 
 		if (EEPROM.read(ALARMA_ACTIVADA) == 1) {
 			registro.registrarEvento("ALARMA ACTIVADA (RESTAURADO ESTADO ANTERIOR)");
-			//registro.updateEntradaRestauradaBD(); //@error
+			//registro.updateEntradaRestauradaBD(); //@ibai
 
 			lcd.clear();
 			rcEstado= false;  //Peligro bucles
@@ -960,7 +964,7 @@ void resetearEstadoPrevio(){
 		if (EEPROM.read(ALARMA_SALTADA) == 1) {
 			Serial.println("\nSalto desconocido");
 			registro.registrarEvento("INTRUSISMO ALARMA (RESTAURADO ESTADO ANTERIOR)");
-			//registro.updateSaltoRestauradoBD(); //Se marca el ultimo salto como restaurado @error
+			//registro.updateSaltoRestauradoBD(); //Se marca el ultimo salto como restaurado @ibai
 
 			delay(9000); //Tiempo de espera para la inicializacion del GSM
 			tiempoOn = millis() + 5000;

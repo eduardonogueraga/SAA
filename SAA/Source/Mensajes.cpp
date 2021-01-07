@@ -251,11 +251,11 @@
 
 			if(telefono ==1){
 				SIM800L.println("ATD+ +34"+Entorno::getTelefonoLlamada(1)+";");
-				registro.llamadaInfoBD("Mi movil");
+				registro.llamadaInfoBD("Mi movil"); //@ibai
 			}
 			if(telefono ==2){
 				SIM800L.println("ATD+ +34"+Entorno::getTelefonoLlamada(2)+";");
-				registro.llamadaInfoBD("Movil 2");
+				registro.llamadaInfoBD("Movil 2"); //@ibai
 			}
 
 			delay(200);

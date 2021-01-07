@@ -172,6 +172,27 @@ void ComandoSerie::demonioSerie(){
 
 		}
 
+		if (data.indexOf("delete sql")>=0){
+				//Modo
+				registro.truncateRegistro("SQL.txt");
+			}
+
+		if (data.indexOf("delete reg")>=0){
+				//Modo
+				registro.truncateRegistro("REGISTRO.txt");
+			}
+
+		if (data.indexOf("delete sensor")>=0){
+				//Modo
+				registro.truncateRegistro("SENSORES.txt");
+			}
+
+		if (data.indexOf("delete all")>=0){
+				//Modo
+				registro.truncateRegistro("SQL.txt");
+				registro.truncateRegistro("REGISTRO.txt");
+				registro.truncateRegistro("SENSORES.txt");
+			}
 
 		if (data.indexOf("set call")>=0){
 

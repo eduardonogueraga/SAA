@@ -44,7 +44,7 @@ void RegistroDatos::generarFichero(){
 		fichero.close();
 		Serial.println("Escritura correcta SD");
 	} else {
-		Serial.println("Error en apertura del archivo SD");
+		Serial.println("Error 1 en apertura del archivo SD");
 	}
 
 }
@@ -59,7 +59,7 @@ void RegistroDatos::registrarEventoBD(String sentenciaSQL){
 		fichero.close();
 
 	} else {
-		Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		Serial.println("ERROR_registrarEventoBD");  //@develop("Omitir el fallo por SD cuando no esta conectado")
 	}
 
 }
@@ -71,12 +71,10 @@ void RegistroDatos::registrarEvento(String descripcion){
 	if (fichero) {
 		fichero.println(descripcion+" "+" Fecha: " + tiempo.imprimeFecha());
 		fichero.close();
-
-	} else {
-		Serial.println("Error en apertura del archivo SD");  //@develop("Omitir el fallo por SD cuando no esta conectado")
+		//return;
 	}
-
-
+	//Serial.println("Error al registrar el evento ["+ descripcion +"]");
+	//fichero.close();
 }
 
 
@@ -88,11 +86,10 @@ void RegistroDatos::registrarSensor(String descripcion){
 	if (fichero) {
 		fichero.println(descripcion + tiempo.imprimeFecha());
 		fichero.close();
-
-	} else {
-		 Serial.println("Error en apertura del archivo SD"); //@develop("Omitir el fallo por SD cuando no esta conectado")
+		return;
 	}
-
+	Serial.println("Error al registrar el sensor ["+ descripcion +"]");
+	fichero.close();
 
 }
 
@@ -104,8 +101,6 @@ void RegistroDatos::inicioAlarmaBD(){
 			fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
 			"VALUES ('ALARMA INICIADA', '"+tiempo.imprimeFechaSQL()+"');");
 			fichero.close();
-		} else {
-			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 		}
 
 }
@@ -119,8 +114,6 @@ void RegistroDatos::bateriaEmergenciaInfoBD(String estado){
 			fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) VALUES "
 				 	 "('"+estado+" BATERIA DE EMERGENCIA', '"+tiempo.imprimeFechaSQL()+"');");
 			fichero.close();
-		} else {
-			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 		}
 }
 
@@ -132,10 +125,7 @@ void RegistroDatos::intentosRecuperadosInfoBD(){
 			fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
 					 "VALUES ('INTENTOS SMS DIARIOS RECUPERADOS', '"+tiempo.imprimeFechaSQL()+"');");
 			fichero.close();
-		} else {
-			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 		}
-
 }
 
 void RegistroDatos::intentosRealizadosInfoBD(String intentos){
@@ -146,8 +136,6 @@ void RegistroDatos::intentosRealizadosInfoBD(String intentos){
 			fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
 					 "VALUES ('INTENTOS SMS REALIZADOS: "+intentos+"', '"+tiempo.imprimeFechaSQL()+"');");
 			fichero.close();
-		} else {
-			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 		}
 
 }
@@ -161,8 +149,6 @@ void RegistroDatos::intentosAcabadosInfoBD(){
 			fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
 					 "VALUES ('INTENTOS SMS DIARIOS ACABADOS', '"+tiempo.imprimeFechaSQL()+"');");
 			fichero.close();
-		} else {
-			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 		}
 
 }
@@ -175,8 +161,6 @@ void RegistroDatos::activarAlarmaBD(String modo, String intentos){
 			fichero.println("INSERT INTO `entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
 		" `fecha`) VALUES ('activacion', '"+modo+"', '0', '"+intentos+"', '"+tiempo.imprimeFechaSQL()+"');");
 			fichero.close();
-		} else {
-			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 		}
 }
 
@@ -189,8 +173,6 @@ void RegistroDatos::desactivarAlarmaBD(String modo, String intentos){
 			fichero.println("INSERT INTO `entradas` (`tipo`, `modo`, `restaurado`, `intentos_reactivacion`,"
 		" `fecha`) VALUES ('desactivacion', '"+modo+"', '0', '"+intentos+"', '"+tiempo.imprimeFechaSQL()+"');");
 			fichero.close();
-		} else {
-			Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 		}
 }
 
@@ -204,8 +186,6 @@ void RegistroDatos::modoAlarmaInfoBD(String modo){
 				fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
 				 			"VALUES ('ALARMA ESTABLECIDA EN MODO "+modo+"', '"+tiempo.imprimeFechaSQL()+"');");
 				fichero.close();
-			} else {
-				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
 }
 
@@ -217,8 +197,6 @@ void RegistroDatos::sensorInfoBD(String tipo, String estado, String modo){
 				fichero.println("INSERT INTO `sensores` (`tipo`, `estado`, `modo`, `fecha`) "
 						"VALUES ('"+tipo+"', '"+estado+"', '"+modo+"', '"+tiempo.imprimeFechaSQL()+"');");
 				fichero.close();
-			} else {
-				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
 }
 
@@ -230,8 +208,6 @@ void RegistroDatos::saltoInfoBD(String restaurado){
 				fichero.println("INSERT INTO `saltos` (`intrusismo`, `restaurado`, `entradas_id`, `sensores_id`) "
 						"VALUES ('0', '"+restaurado+"',(SELECT max(id) FROM entradas), (SELECT max(id) FROM sensores));");
 				fichero.close();
-			} else {
-				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
 }
 
@@ -243,10 +219,10 @@ void RegistroDatos::mensajeInfoBD(String tipo, String asunto, String cuerpo){
 				fichero.println("INSERT INTO `mensajes` (`tipo`, `asunto`, `cuerpo`, `fecha_sms`) "
 						"VALUES ('"+tipo+"', '"+asunto+"', '"+cuerpo+"', '"+tiempo.imprimeFechaSQL()+"');");
 				fichero.close();
-			} else {
-				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
 }
+
+
 
 void RegistroDatos::updateSaltoInfoBD(){
 
@@ -256,8 +232,6 @@ void RegistroDatos::updateSaltoInfoBD(){
 				fichero.println("UPDATE `saltos` SET `intrusismo` = '1', `mensajes_id` = (SELECT max(id) FROM mensajes) "
 						"WHERE (id = (SELECT * FROM(SELECT max(id) FROM saltos) as ultimo_id));");
 				fichero.close();
-			} else {
-				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
 }
 
@@ -269,8 +243,6 @@ void RegistroDatos::updateEntradaInfoBD(){
 				fichero.println("UPDATE `entradas` SET `mensajes_id` = (SELECT max(id) FROM mensajes) "
 						"WHERE (id = (SELECT * FROM(SELECT max(id) FROM entradas) as ultimo_id));");
 				fichero.close();
-			} else {
-				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
 }
 
@@ -283,8 +255,6 @@ void RegistroDatos::updateErroresInfoBD(){
 				fichero.println("UPDATE `errores` SET `mensajes_id` = (SELECT max(id) FROM mensajes) "
 						"WHERE (id = (SELECT * FROM(SELECT max(id) FROM errores) as ultimo_id));");
 				fichero.close();
-			} else {
-				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
 }
 
@@ -295,8 +265,6 @@ void RegistroDatos::updateEntradaRestauradaBD(){
 			if (fichero) {
 				fichero.println("UPDATE `entradas` SET `restaurado` = '1' WHERE (id = (SELECT * FROM(SELECT max(id) FROM entradas) as ultimo_id));");
 				fichero.close();
-			} else {
-				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
 }
 
@@ -308,8 +276,6 @@ void RegistroDatos::updateSaltoRestauradoBD(){
 			if (fichero) {
 				fichero.println("UPDATE `saltos` SET `restaurado` = '1' WHERE (id = (SELECT * FROM(SELECT max(id) FROM saltos) as ultimo_id));");
 				fichero.close();
-			} else {
-				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
 }
 
@@ -321,8 +287,6 @@ void RegistroDatos::llamadaInfoBD(String nombre){
 				fichero.println("INSERT INTO `alarma` (`descripcion`, `fecha`) "
 						"VALUES ('LLAMANDO A: "+nombre+"', '"+tiempo.imprimeFechaSQL()+"');");
 				fichero.close();
-			} else {
-				Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 			}
 }
 
@@ -334,8 +298,6 @@ void RegistroDatos::resetInfoBD(String modo){
 					fichero.println("INSERT INTO `reset` (`modo`, `fecha`) "
 							"VALUES ('"+modo+"', '"+tiempo.imprimeFechaSQL()+"');");
 					fichero.close();
-				} else {
-					Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 				}
 }
 
@@ -348,8 +310,6 @@ void RegistroDatos::errorInfoBD(String descripcion){
 					fichero.println("INSERT INTO `errores` (`descripcion`, `fecha`) "
 							"VALUES ('"+descripcion+"', '"+tiempo.imprimeFechaSQL()+"');");
 					fichero.close();
-				} else {
-					Serial.println(RegistroDatos::sdErrorMessage);  //@develop("Omitir el fallo por SD cuando no esta conectado")
 				}
 }
 
@@ -367,7 +327,7 @@ void RegistroDatos::mostrarRegistro(String nom){
 		fichero.close();
 
 	} else {
-		Serial.println("Error en apertura del archivo SD");
+		Serial.println("Error 4 en apertura del archivo SD");
 	}
 
 }
@@ -395,7 +355,7 @@ int RegistroDatos::getValorPropiedad(String nombreVar){
 		fichero.close();
 
 	} else {
-		Serial.println("Error en apertura del archivo SD");
+		Serial.println("Error 5 en apertura del archivo SD");
 	}
 
 	for (unsigned int i = 0; i < archivoPropiedades.length(); i++){ //Divide por instrucciones
@@ -442,3 +402,14 @@ String  RegistroDatos::getValue(String data, char separator, int index) //Metodo
 
 	return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
+
+
+void RegistroDatos::truncateRegistro(String archivo)
+{
+	if(fichero = SD.open(archivo, O_WRITE | O_TRUNC)){
+		Serial.println("EL contenido de "+archivo+" ha sido eliminado");
+	}else{
+		Serial.println("Error a eliminar el archivo");
+	}
+}
+
